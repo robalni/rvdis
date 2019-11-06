@@ -221,7 +221,7 @@ int main()
                 uint32_t u_rd = bits(instr, 11, 7);
                 int32_t u_imm = bits(instr, 31, 12);
                 u_imm = sign_extend(u_imm, 20);
-                printf("lui %s, %d", regs[u_rd], u_imm);
+                printf("lui %s, 0x%02x", regs[u_rd], u_imm);
             } else if (op == 0b1110011) {
                 if (funct == 0b010) {
                     printf("csrrs %s, %s, %s", regs[r1], csr_name(uimm), regs[r2]);
