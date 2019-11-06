@@ -181,20 +181,45 @@ int main()
             uint32_t r1 = bits(instr, 11, 7);
             uint32_t r2 = bits(instr, 19, 15);
             if (op == 0b10011) {
-                if (funct == 0) {
+                if (funct == 0b000) {
                     printf("addi %s, %s, %d", regs[r1], regs[r2], imm);
+                }
+            } else if (op == 0b0110011) {
+                uint32_t r_rd = bits(instr, 11, 7);
+                uint32_t r_rs1 = bits(instr, 19, 15);
+                uint32_t r_rs2 = bits(instr, 24, 20);
+                if (funct == 0b000) {
+                    printf("add %s, %s, %s", regs[r_rd], regs[r_rs1], regs[r_rs2]);
                 }
             } else if (op == 0b0100011) {
                 uint32_t s_imm = bits(instr, 11, 7) | bits(instr, 31, 25) << 5;
                 s_imm = sign_extend(s_imm, 12);
                 uint32_t s_r1 = bits(instr, 19, 15);
                 uint32_t s_r2 = bits(instr, 24, 20);
-                if (funct == 0b010) {
+                if (funct == 0b000) {
+                    printf("sb %s, %d(%s)", regs[s_r2], s_imm, regs[s_r1]);
+                } else if (funct == 0b001) {
+                    printf("sh %s, %d(%s)", regs[s_r2], s_imm, regs[s_r1]);
+                } else if (funct == 0b010) {
                     printf("sw %s, %d(%s)", regs[s_r2], s_imm, regs[s_r1]);
+                } else if (funct == 0b011) {
+                    printf("sd %s, %d(%s)", regs[s_r2], s_imm, regs[s_r1]);
                 }
             } else if (op == 0b0000011) {
-                if (funct == 0b010) {
-                    printf("lw %s %d(%s)", regs[r1], imm, regs[r2]);
+                if (funct == 0b000) {
+                    printf("lb %s, %d(%s)", regs[r1], imm, regs[r2]);
+                } else if (funct == 0b001) {
+                    printf("lh %s, %d(%s)", regs[r1], imm, regs[r2]);
+                } else if (funct == 0b010) {
+                    printf("lw %s, %d(%s)", regs[r1], imm, regs[r2]);
+                } else if (funct == 0b011) {
+                    printf("ld %s, %d(%s)", regs[r1], imm, regs[r2]);
+                } else if (funct == 0b100) {
+                    printf("lbu %s, %d(%s)", regs[r1], imm, regs[r2]);
+                } else if (funct == 0b101) {
+                    printf("lhu %s, %d(%s)", regs[r1], imm, regs[r2]);
+                } else if (funct == 0b110) {
+                    printf("lwu %s, %d(%s)", regs[r1], imm, regs[r2]);
                 }
             } else if (op == 0b1100011) {
                 uint32_t b_rs1 = bits(instr, 19, 15);
@@ -204,10 +229,18 @@ int main()
                     | bits(instr, 11, 8) << 1
                     | bits(instr, 7, 7) << 11;
                 b_imm = sign_extend(b_imm, 13);
-                if (funct == 1) {
+                if (funct == 0b000) {
+                    printf("beq %s, %s, %d", regs[b_rs1], regs[b_rs2], b_imm);
+                } else if (funct == 0b001) {
                     printf("bne %s, %s, %d", regs[b_rs1], regs[b_rs2], b_imm);
                 } else if (funct == 0b100) {
                     printf("blt %s, %s, %d", regs[b_rs1], regs[b_rs2], b_imm);
+                } else if (funct == 0b101) {
+                    printf("bge %s, %s, %d", regs[b_rs1], regs[b_rs2], b_imm);
+                } else if (funct == 0b110) {
+                    printf("bltu %s, %s, %d", regs[b_rs1], regs[b_rs2], b_imm);
+                } else if (funct == 0b111) {
+                    printf("bgeu %s, %s, %d", regs[b_rs1], regs[b_rs2], b_imm);
                 }
             } else if (op == 0b1101111) {
                 uint32_t j_rd = bits(instr, 11, 7);
@@ -217,11 +250,18 @@ int main()
                     | bits(instr, 19, 12) << 12;
                 j_imm = sign_extend(j_imm, 21);
                 printf("jal %s, %d", regs[j_rd], j_imm);
+            } else if (op == 0b1100111) {
+                printf("jalr %s, %d(%s)", regs[r1], imm, regs[r2]);
             } else if (op == 0b0110111) {
                 uint32_t u_rd = bits(instr, 11, 7);
                 int32_t u_imm = bits(instr, 31, 12);
                 u_imm = sign_extend(u_imm, 20);
                 printf("lui %s, 0x%02x", regs[u_rd], u_imm);
+            } else if (op == 0b0010111) {
+                uint32_t u_rd = bits(instr, 11, 7);
+                int32_t u_imm = bits(instr, 31, 12);
+                u_imm = sign_extend(u_imm, 20);
+                printf("auipc %s, 0x%02x", regs[u_rd], u_imm);
             } else if (op == 0b1110011) {
                 if (funct == 0b010) {
                     printf("csrrs %s, %s, %s", regs[r1], csr_name(uimm), regs[r2]);
