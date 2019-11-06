@@ -235,7 +235,7 @@ int main()
             i += 4;
         } else {
             fprintf(stderr, "Bad instruction length %02x\n", *p0);
-            break;
+            i += 2;
         }
     }
 }
