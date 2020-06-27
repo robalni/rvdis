@@ -151,7 +151,7 @@ int main()
             uint16_t instr = *(uint16_t*)p0;
             printf("    %04x  ", instr);
             uint32_t funct = bits(instr, 15, 13);
-            uint32_t op = bits(instr, 2, 0);
+            uint32_t op = bits(instr, 1, 0);
             uint32_t r1 = bits(instr, 6, 2);
             uint32_t r2 = bits(instr, 11, 7);
             uint32_t b = bits(instr, 12, 12);
@@ -189,7 +189,11 @@ int main()
                 uint32_t r_rs1 = bits(instr, 19, 15);
                 uint32_t r_rs2 = bits(instr, 24, 20);
                 if (funct == 0b000) {
-                    printf("add %s, %s, %s", regs[r_rd], regs[r_rs1], regs[r_rs2]);
+                    if (bits(instr, 30, 30)) {
+                        printf("sub %s, %s, %s", regs[r_rd], regs[r_rs1], regs[r_rs2]);
+                    } else {
+                        printf("add %s, %s, %s", regs[r_rd], regs[r_rs1], regs[r_rs2]);
+                    }
                 }
             } else if (op == 0b0100011) {
                 uint32_t s_imm = bits(instr, 11, 7) | bits(instr, 31, 25) << 5;
