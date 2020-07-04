@@ -163,8 +163,12 @@ int main()
                     printf("c.li %s, %d", regs[r2], imm);
                 }
             } else if (op == 0b10) {
-                if (funct == 0b100 && r1 && r2 && !b) {
-                    printf("c.mv %s, %s", regs[r2], regs[r1]);
+                if (funct == 0b100) {
+                    if (r1 && r2 && !b) {
+                        printf("c.mv %s, %s", regs[r2], regs[r1]);
+                    } else if (b && r1 && r2) {
+                        printf("c.add %s, %s", regs[r2], regs[r1]);
+                    }
                 }
             }
             printf("\n");
